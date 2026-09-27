@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // USERS — each user can read any profile (needed to display names),
+    // but can only create/update their own document.
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null && request.auth.uid == userId;
+      allow delete: if false; // profiles are never deleted from the client
+    }
+
+    // PODCASTS — referenced/browsed by everyone, but only the user who
+    // added a podcast may edit or delete it.
+    match /podcasts/{podcastId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+                    && request.resource.data.addedBy == request.auth.uid;
+      allow update, delete: if request.auth != null
+                    && resource.data.addedBy == request.auth.uid;
+    }
+
+    // EPISODES — belong to a podcast. Only the podcast's owner may add,
+    // edit, or delete its episodes.
+    match /episodes/{episodeId} {
+      allow read: if request.auth != null;
+
+      allow create: if request.auth != null
+                    && request.resource.data.addedBy == request.auth.uid
+                    && get(/databases/$(database)/documents/podcasts/$(request.resource.data.podcastId)).data.addedBy == request.auth.uid;
+
+      allow update, delete: if request.auth != null
+                    && resource.data.addedBy == request.auth.uid;
+    }
+
+    // NOTES — strictly private to the user who wrote them (the "owner"
+    // entity). Nobody else may read or write another user's notes.
+    match /notes/{noteId} {
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid;
+
+      allow update, delete: if request.auth != null
+                    && resource.data.userId == request.auth.uid;
+    }
+  }
+}

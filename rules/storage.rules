@@ -1,0 +1,29 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Podcast cover images: any signed-in user may upload (podcast
+    // creation happens client-side before the Firestore doc write),
+    // but files are capped at 5MB and must be actual images.
+    match /podcast_covers/{podcastId}.jpg {
+      allow read: if true; // cover art is public-facing, like any app icon
+      allow write: if request.auth != null
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // Profile images: only the owning user may write to their own folder.
+    match /profile_images/{userId}.jpg {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.uid == userId
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // Deny everything else by default.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

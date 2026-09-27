@@ -1,32 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../services/auth_service.dart';
+import '../podcasts/podcast_list_screen.dart';
 
-/// Placeholder for now — in the next step we'll turn this into the
-/// Podcast feed (Cloud Firestore + Cloud Storage layer).
+/// AuthGate routes here once signed in. This simply hands off to the
+/// Podcast feed, which is the real home screen (Day 11).
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final authService = AuthService();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Podcast Notes'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => authService.signOut(),
-          ),
-        ],
-      ),
-      body: Center(
-        child: Text(
-          'Signed in as ${authService.currentUser?.email ?? ''}\n\n'
-          'Podcast feed goes here next.',
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
+    return const PodcastListScreen();
   }
 }
