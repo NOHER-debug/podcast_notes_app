@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1003236991318",
+    "project_id": "podcastnotesapp",
+    "storage_bucket": "podcastnotesapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1003236991318:android:4c109df9ce73271c1276f7",
+        "android_client_info": {
+          "package_name": "com.example.podcast_notes_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBz6mltxcwW0s8SZBCliV-h-caGXwv8QzE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
